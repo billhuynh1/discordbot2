@@ -132,3 +132,4 @@ function makeGrid() {
 
 // Login to Discord with client's token
 client.login(token);
+//Just checking someting
