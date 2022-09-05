@@ -114,6 +114,21 @@ function makeGrid() {
     return components
 }
 
+client.on('interactionCreate', async (interaction) => {
+    if(!interaction.isButton()) return;
+    if(!interaction.customId.startsWith('tictactoe')) return;
+
+    parsedFields = interaction.customId.split("_")
+    
+    let row = parsedFields[1]
+    let col = parsedFields[2]
+    tictactoe_state[row][col] = PLAYER
+    
+    interaction.update({
+        components: makeGrid()
+    })
+
+})
  client.on('interactionCreate', async (interaction) => {
     if(!interaction.isCommand()) return;
 
