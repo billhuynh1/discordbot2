@@ -114,22 +114,98 @@ function makeGrid() {
     return components
 }
 
-client.on('interactionCreate', async (interaction) => {
-    if(!interaction.isButton()) return;
-    if(!interaction.customId.startsWith('tictactoe')) return;
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max)
+}
 
-    parsedFields = interaction.customId.split("_")
-    
+function isDraw() {
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+            if (tictactoe_state[row][col] == EMPTY) {
+                return false
+            }
+        }
+    }
+    return true;
+}
+
+function isGameOver() {
+    for (let i = 0; i < 3; i++) {
+        if (tictactoe_state[i][0] === tictactoe_state[i][1] && tictactoe_state[i][1] == tictactoe_state[i][2] && tictactoe_state[i][2] != EMPTY) {
+            return true;
+        }
+
+        if (tictactoe_state[0][i] == tictactoe_state[1][i] && tictactoe_state[1][i] == tictactoe_state[2][i] && tictactoe_state[2][i] != EMPTY) {
+            return true;
+        }
+    }
+
+    if (tictactoe_state[1][1] != EMPTY) {
+        if ((tictactoe_state[0][0] == tictactoe_state[1][1] == tictactoe_state[1][1] == tictactoe_state[0][2]) || 
+            (tictactoe_state[2][0] == tictactoe_state[1][1] == tictactoe_state[1][1] == tictactoe_state[0][2])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isButton()) return;
+    if (!interaction.customId.startsWith('tictactoe')) return;
+
+    let parsedFields = interaction.customId.split("_")
     let row = parsedFields[1]
-    let col = parsedFields[2]
-    tictactoe_state[row][col] = PLAYER
+    let col = parsedFields[2]  
+    
+    if (tictactoe_state[row][col] != EMPTY) {
+        interaction.update({
+            content: "Cannot select that position!", 
+            components: makeGrid()
+        })
+        return;
+    }
+    
+    tictactoe_state[row][col] = PLAYER 
+
+    if (isGameOver()) {
+        interaction.update({
+            content: "You won!", 
+            components: []
+        })
+        return;
+    }
+
+    if (isDraw()) {
+        interaction.update({
+            content: "The game resulted in a draw!", 
+            components: []
+        })
+        return;
+    }
+    /* Bot playing */
+    let botRow
+    let botCol
+    do {
+        botRow = getRandomInt(2);
+        botCol = getRandomInt(2);
+    } while (tictactoe_state[botRow][botCol] != EMPTY);
+
+    tictactoe_state[botRow][botCol] = BOT;
+
+    if (isGameOver()) {
+        interaction.update({
+            contents: "You lost!",
+            components: makeGrid()
+        })
+        return;
+    }
     
     interaction.update({
         components: makeGrid()
     })
-
 })
- client.on('interactionCreate', async (interaction) => {
+
+client.on('interactionCreate', async (interaction) => {
     if(!interaction.isCommand()) return;
 
     const { commandName } = interaction;
