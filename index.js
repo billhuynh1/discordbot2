@@ -152,6 +152,13 @@ function isGameOver() {
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isButton()) return;
     if (!interaction.customId.startsWith('tictactoe')) return;
+    
+    if (isGameOver()) {
+        interaction.update({
+            components: makeGrid()
+        })
+        return;
+    }
 
     let parsedFields = interaction.customId.split("_")
     let row = parsedFields[1]
@@ -186,8 +193,8 @@ client.on('interactionCreate', async (interaction) => {
     let botRow
     let botCol
     do {
-        botRow = getRandomInt(2);
-        botCol = getRandomInt(2);
+        botRow = getRandomInt(3);
+        botCol = getRandomInt(3);
     } while (tictactoe_state[botRow][botCol] != EMPTY);
 
     tictactoe_state[botRow][botCol] = BOT;
