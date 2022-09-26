@@ -59,10 +59,18 @@ client.on('interactionCreate', async (interaction) => {
 client.on('messageCreate', (message) => {
     if(message.author.id === client.user.id) return;
 
-    if(message.content === "lost ark") {
+    if(message.content === "lost ark" || message.content === "league" || message.content === "league of legends") {
         message.reply("is dogshit game")
     }
- })
+})
+
+client.on('messageCreate', (message) => {
+    if(message.author.id === client.user.id) return;
+
+    if(message.content === "christian") {
+        message.reply("gets no bitches")
+    }
+})
 
  client.on('messageCreate', (message) => {
     if(message.author.id === client.user.id) return;
@@ -71,6 +79,14 @@ client.on('messageCreate', (message) => {
         message.reply("loml")
     }
  })
+
+client.on('messageCreate', (message) => {
+    if(message.author.id === client.user.id) return;
+
+    if(message.content === "ben" || message.content === "Ben") {
+        message.reply("christians bf <3")
+    }
+}) 
 
 /* Tic Tac Toe */
 let EMPTY = Symbol("empty");
@@ -131,18 +147,18 @@ function isDraw() {
 
 function isGameOver() {
     for (let i = 0; i < 3; i++) {
-        if (tictactoe_state[i][0] === tictactoe_state[i][1] && tictactoe_state[i][1] == tictactoe_state[i][2] && tictactoe_state[i][2] != EMPTY) {
+        if ((tictactoe_state[i][0] === tictactoe_state[i][1] && tictactoe_state[i][1] == tictactoe_state[i][2]) && tictactoe_state[i][2] != EMPTY) {
             return true;
         }
 
-        if (tictactoe_state[0][i] == tictactoe_state[1][i] && tictactoe_state[1][i] == tictactoe_state[2][i] && tictactoe_state[2][i] != EMPTY) {
+        if ((tictactoe_state[0][i] == tictactoe_state[1][i] && tictactoe_state[1][i] == tictactoe_state[2][i]) && tictactoe_state[2][i] != EMPTY) {
             return true;
         }
     }
 
     if (tictactoe_state[1][1] != EMPTY) {
-        if ((tictactoe_state[0][0] == tictactoe_state[1][1] == tictactoe_state[1][1] == tictactoe_state[0][2]) || 
-            (tictactoe_state[2][0] == tictactoe_state[1][1] == tictactoe_state[1][1] == tictactoe_state[0][2])) {
+        if ((tictactoe_state[0][0] == tictactoe_state[1][1] && tictactoe_state[1][1] == tictactoe_state[0][2]) || 
+            (tictactoe_state[2][0] == tictactoe_state[1][1] && tictactoe_state[1][1] == tictactoe_state[0][2])) {
             return true;
         }
     }
@@ -152,7 +168,7 @@ function isGameOver() {
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isButton()) return;
     if (!interaction.customId.startsWith('tictactoe')) return;
-    
+
     if (isGameOver()) {
         interaction.update({
             components: makeGrid()
@@ -177,7 +193,7 @@ client.on('interactionCreate', async (interaction) => {
     if (isGameOver()) {
         interaction.update({
             content: "You won!", 
-            components: []
+            components: makeGrid()
         })
         return;
     }
@@ -201,8 +217,16 @@ client.on('interactionCreate', async (interaction) => {
 
     if (isGameOver()) {
         interaction.update({
-            contents: "You lost!",
+            content: "You lost!", 
             components: makeGrid()
+        })
+        return;
+    }
+
+    if (isDraw()) {
+        interaction.update({
+            content: "The game resulted in a draw!", 
+            components: []
         })
         return;
     }
