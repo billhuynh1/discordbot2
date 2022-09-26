@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, ActionRow, Message, ButtonComponent } = require('discord.js')
 const { token } = require('./config.json')
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { TicTacToe } = require('./databaseObjects.js');
 
 // Creates new client instance
 const client = new Client({
@@ -191,8 +192,19 @@ client.on('interactionCreate', async (interaction) => {
     tictactoe_state[row][col] = PLAYER 
 
     if (isGameOver()) {
+        let user = await TicTacToe.findOne({
+            where: {
+                user_id: interaction.user.id
+            }
+        });
+        if(!user) {
+            user = await TicTacToe.create({ user_id: interaction.user.id});
+        }
+        
+        await user.increment('score');
+
         interaction.update({
-            content: "You won!", 
+            content: "You won! You now have " + (user.get('score') + 1) + " time(s).", 
             components: makeGrid()
         })
         return;
